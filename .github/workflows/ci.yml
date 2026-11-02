@@ -50,7 +50,7 @@ jobs:
       - run: cargo install wasm-pack
       - name: Build WASM bundle
         env:
-          CFLAGS: "--sysroot=/usr/share/wasi-sysroot"
+          CFLAGS: "-isystem /usr/share/wasi-sysroot/include -isystem /usr/share/wasi-sysroot/include/wasm32-wasi -isystem /usr/include/wasm32-wasi"
         run: wasm-pack build --target web --features wasm --no-default-features
 
   bench:

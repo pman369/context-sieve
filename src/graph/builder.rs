@@ -29,10 +29,10 @@ impl GraphBuilder {
                 let name_bytes = sym.name.slice(source);
                 let h = hash_bytes(name_bytes);
                 let meta = SymbolMeta {
-                    name_start:    sym.name.start,
-                    name_end:      sym.name.end,
-                    body_start:    sym.body.start,
-                    body_end:      sym.body.end,
+                    name_start: sym.name.start,
+                    name_end: sym.name.end,
+                    body_start: sym.body.start,
+                    body_end: sym.body.end,
                     is_definition: true,
                 };
                 let id = graph.inner.add_node(meta);
@@ -53,9 +53,7 @@ impl GraphBuilder {
             let caller_id = def_nodes
                 .iter()
                 .rev()
-                .find(|(_, def)| {
-                    def.body.start <= sym.body.start && sym.body.end <= def.body.end
-                })
+                .find(|(_, def)| def.body.start <= sym.body.start && sym.body.end <= def.body.end)
                 .map(|(id, _)| *id);
 
             let callee_name = sym.name.slice(source);
@@ -63,9 +61,7 @@ impl GraphBuilder {
             let leaf = leaf_name(callee_name);
             let h = hash_bytes(leaf);
 
-            if let (Some(caller), Some(&callee)) =
-                (caller_id, graph.name_index.get(&h))
-            {
+            if let (Some(caller), Some(&callee)) = (caller_id, graph.name_index.get(&h)) {
                 // Avoid self-loops.
                 if caller != callee {
                     graph.inner.add_edge(caller, callee, ());
@@ -81,7 +77,7 @@ impl GraphBuilder {
 fn leaf_name(bytes: &[u8]) -> &[u8] {
     match bytes.iter().rposition(|&b| b == b'.' || b == b':') {
         Some(pos) => &bytes[pos + 1..],
-        None      => bytes,
+        None => bytes,
     }
 }
 

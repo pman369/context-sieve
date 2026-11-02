@@ -40,7 +40,7 @@ impl Condenser {
 
         for (prune_start, prune_end) in merged {
             let ps = prune_start as usize;
-            let pe = prune_end  as usize;
+            let pe = prune_end as usize;
 
             if ps > cursor {
                 out.extend_from_slice(&source[cursor..ps]);

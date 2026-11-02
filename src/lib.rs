@@ -13,8 +13,8 @@
 
 pub mod ast;
 pub mod graph;
-pub mod sieve;
 pub mod lsp;
+pub mod sieve;
 
 #[cfg(feature = "daemon")]
 pub mod daemon;

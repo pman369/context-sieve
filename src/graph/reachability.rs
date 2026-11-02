@@ -50,10 +50,7 @@ impl ReachabilityQuery {
 
     /// Symbols that have **zero** incoming edges AND are **not** reachable from
     /// any root — these are dead-code candidates for pruning.
-    pub fn unreachable_symbols(
-        graph: &DepGraph,
-        reachable: &FxHashSet<SymbolId>,
-    ) -> Vec<SymbolId> {
+    pub fn unreachable_symbols(graph: &DepGraph, reachable: &FxHashSet<SymbolId>) -> Vec<SymbolId> {
         graph
             .inner
             .node_indices()

@@ -1,10 +1,10 @@
 //! Language backend registry.
 
-pub mod rust;
 pub mod python;
+pub mod rust;
 
-use tree_sitter::Parser;
 use crate::ast::symbol::Symbol;
+use tree_sitter::Parser;
 
 /// Implemented by each language backend.
 pub trait LanguageParser {

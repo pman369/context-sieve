@@ -18,9 +18,7 @@ pub struct RustParser;
 
 impl LanguageParser for RustParser {
     fn parse(parser: &mut Parser, source: &[u8]) -> Option<Vec<Symbol>> {
-        parser
-            .set_language(&tree_sitter_rust::language().into())
-            .ok()?;
+        parser.set_language(&tree_sitter_rust::language()).ok()?;
 
         let tree = parser.parse(source, None)?;
         let mut symbols = Vec::new();
@@ -56,33 +54,63 @@ fn visit_rust_node(node: Node, _source: &[u8], depth: u8, out: &mut Vec<Symbol>)
         // --- Definitions ---
         "function_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Function, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Function,
+                    depth,
+                ));
             }
         }
         "struct_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Struct, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Struct,
+                    depth,
+                ));
             }
         }
         "enum_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Enum, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Enum,
+                    depth,
+                ));
             }
         }
         "trait_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Trait, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Trait,
+                    depth,
+                ));
             }
         }
         "impl_item" => {
             // impl blocks: name is the type being implemented.
             if let Some(type_node) = node.child_by_field_name("type") {
-                out.push(Symbol::new(span_of(&type_node), body, SymbolKind::Impl, depth));
+                out.push(Symbol::new(
+                    span_of(&type_node),
+                    body,
+                    SymbolKind::Impl,
+                    depth,
+                ));
             }
         }
         "mod_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Module, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Module,
+                    depth,
+                ));
             }
         }
         "use_declaration" => {
@@ -91,18 +119,33 @@ fn visit_rust_node(node: Node, _source: &[u8], depth: u8, out: &mut Vec<Symbol>)
         }
         "type_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::TypeAlias, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::TypeAlias,
+                    depth,
+                ));
             }
         }
         "const_item" | "static_item" => {
             if let Some(name_node) = node.child_by_field_name("name") {
-                out.push(Symbol::new(span_of(&name_node), body, SymbolKind::Constant, depth));
+                out.push(Symbol::new(
+                    span_of(&name_node),
+                    body,
+                    SymbolKind::Constant,
+                    depth,
+                ));
             }
         }
         // --- Call sites ---
         "call_expression" => {
             if let Some(func_node) = node.child_by_field_name("function") {
-                out.push(Symbol::new(span_of(&func_node), body, SymbolKind::CallSite, depth));
+                out.push(Symbol::new(
+                    span_of(&func_node),
+                    body,
+                    SymbolKind::CallSite,
+                    depth,
+                ));
             }
         }
         _ => {}
@@ -111,8 +154,5 @@ fn visit_rust_node(node: Node, _source: &[u8], depth: u8, out: &mut Vec<Symbol>)
 
 #[inline]
 fn span_of(node: &Node) -> Span {
-    Span::new(
-        node.start_byte() as u32,
-        node.end_byte() as u32,
-    )
+    Span::new(node.start_byte() as u32, node.end_byte() as u32)
 }

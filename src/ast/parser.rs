@@ -7,7 +7,7 @@
 
 use tree_sitter::Parser;
 
-use crate::ast::languages::{LanguageParser, rust::RustParser, python::PythonParser};
+use crate::ast::languages::{python::PythonParser, rust::RustParser, LanguageParser};
 use crate::ast::symbol::Symbol;
 
 /// Supported source languages.
@@ -23,11 +23,11 @@ impl Language {
     /// Infer language from file extension.
     pub fn from_extension(ext: &str) -> Option<Self> {
         match ext {
-            "rs"              => Some(Language::Rust),
-            "py"              => Some(Language::Python),
-            "ts" | "tsx"      => Some(Language::TypeScript),
-            "go"              => Some(Language::Go),
-            _                 => None,
+            "rs" => Some(Language::Rust),
+            "py" => Some(Language::Python),
+            "ts" | "tsx" => Some(Language::TypeScript),
+            "go" => Some(Language::Go),
+            _ => None,
         }
     }
 }
@@ -40,25 +40,25 @@ pub struct AstParser {
 
 impl AstParser {
     pub fn new() -> Self {
-        Self { inner: Parser::new() }
+        Self {
+            inner: Parser::new(),
+        }
     }
 
     /// Parse `source` as the given language and return the flat symbol list.
     ///
     /// Returns `None` if the language is not yet supported or parsing fails.
-    pub fn parse<'src>(
-        &mut self,
-        language: Language,
-        source: &'src [u8],
-    ) -> Option<Vec<Symbol>> {
+    pub fn parse(&mut self, language: Language, source: &[u8]) -> Option<Vec<Symbol>> {
         match language {
-            Language::Rust   => RustParser::parse(&mut self.inner, source),
+            Language::Rust => RustParser::parse(&mut self.inner, source),
             Language::Python => PythonParser::parse(&mut self.inner, source),
-            _                => None, // TypeScript / Go: placeholder
+            _ => None, // TypeScript / Go: placeholder
         }
     }
 }
 
 impl Default for AstParser {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }

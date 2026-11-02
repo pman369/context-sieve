@@ -25,21 +25,16 @@ use crate::sieve::{SieveConfig, SievePass};
 ///
 /// Returns the pruned source text, or the original text if sieving fails.
 #[wasm_bindgen]
-pub fn condense(
-    source: &str,
-    language: &str,
-    cursor_offset: usize,
-    max_hops: usize,
-) -> String {
+pub fn condense(source: &str, language: &str, cursor_offset: usize, max_hops: usize) -> String {
     #[cfg(feature = "wasm")]
     console_error_panic_hook::set_once();
 
     let lang = match language {
-        "rust"       => Language::Rust,
-        "python"     => Language::Python,
+        "rust" => Language::Rust,
+        "python" => Language::Python,
         "typescript" => Language::TypeScript,
-        "go"         => Language::Go,
-        _            => return source.to_owned(),
+        "go" => Language::Go,
+        _ => return source.to_owned(),
     };
 
     let config = SieveConfig {
@@ -51,24 +46,19 @@ pub fn condense(
     let mut pass = SievePass::new();
     match pass.run(source.as_bytes(), &config) {
         Some(result) => String::from_utf8_lossy(&result.pruned).into_owned(),
-        None         => source.to_owned(),
+        None => source.to_owned(),
     }
 }
 
 /// Returns the reduction percentage for a given source (0.0–100.0).
 #[wasm_bindgen]
-pub fn reduction_pct(
-    source: &str,
-    language: &str,
-    cursor_offset: usize,
-    max_hops: usize,
-) -> f64 {
+pub fn reduction_pct(source: &str, language: &str, cursor_offset: usize, max_hops: usize) -> f64 {
     let lang = match language {
-        "rust"       => Language::Rust,
-        "python"     => Language::Python,
+        "rust" => Language::Rust,
+        "python" => Language::Python,
         "typescript" => Language::TypeScript,
-        "go"         => Language::Go,
-        _            => return 0.0,
+        "go" => Language::Go,
+        _ => return 0.0,
     };
 
     let config = SieveConfig {

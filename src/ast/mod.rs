@@ -6,8 +6,8 @@
 //! directly into [`crate::graph`].
 
 pub mod languages;
-pub mod symbol;
 pub mod parser;
+pub mod symbol;
 
 pub use parser::{AstParser, Language};
-pub use symbol::{Symbol, SymbolKind, Span};
+pub use symbol::{Span, Symbol, SymbolKind};

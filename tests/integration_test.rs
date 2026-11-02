@@ -38,16 +38,26 @@ fn parses_rust_symbols() {
     assert!(symbols.is_some(), "Rust parser returned None");
     let symbols = symbols.unwrap();
     let defs: Vec<_> = symbols.iter().filter(|s| s.is_definition()).collect();
-    assert!(defs.len() >= 5, "expected ≥5 definitions, got {}", defs.len());
+    assert!(
+        defs.len() >= 5,
+        "expected ≥5 definitions, got {}",
+        defs.len()
+    );
 }
 
 #[test]
 fn graph_has_expected_edge_count() {
     let mut parser = AstParser::new();
-    let symbols = parser.parse(Language::Rust, RUST_FIXTURE.as_bytes()).unwrap();
+    let symbols = parser
+        .parse(Language::Rust, RUST_FIXTURE.as_bytes())
+        .unwrap();
     let graph = GraphBuilder::build(&symbols, RUST_FIXTURE.as_bytes());
     // entry_point→helper_a, helper_a→helper_b = at least 2 edges.
-    assert!(graph.edge_count() >= 2, "expected ≥2 call edges, got {}", graph.edge_count());
+    assert!(
+        graph.edge_count() >= 2,
+        "expected ≥2 call edges, got {}",
+        graph.edge_count()
+    );
 }
 
 #[test]
@@ -85,9 +95,15 @@ fn sieve_preserves_reachable_code() {
     };
     let result = pass.run(RUST_FIXTURE.as_bytes(), &config).unwrap();
     let pruned_str = std::str::from_utf8(&result.pruned).unwrap();
-    assert!(pruned_str.contains("entry_point"), "entry_point must be retained");
-    assert!(pruned_str.contains("helper_a"),    "helper_a must be retained");
-    assert!(pruned_str.contains("helper_b"),    "helper_b must be retained (2 hops)");
+    assert!(
+        pruned_str.contains("entry_point"),
+        "entry_point must be retained"
+    );
+    assert!(pruned_str.contains("helper_a"), "helper_a must be retained");
+    assert!(
+        pruned_str.contains("helper_b"),
+        "helper_b must be retained (2 hops)"
+    );
 }
 
 #[test]

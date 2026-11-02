@@ -47,15 +47,15 @@ impl LspIntercept {
     pub fn process(&mut self, msg: JsonRpcMessage) -> InterceptAction {
         let method = match msg.method.as_deref() {
             Some(m) => m,
-            None    => return InterceptAction::Forward(msg),
+            None => return InterceptAction::Forward(msg),
         };
 
         match method {
-            "textDocument/didOpen"   => self.handle_did_open(msg),
+            "textDocument/didOpen" => self.handle_did_open(msg),
             "textDocument/didChange" => self.handle_did_change(msg),
-            "textDocument/didSave"   => self.handle_did_save(msg),
+            "textDocument/didSave" => self.handle_did_save(msg),
             "$/sieve/condensedBuffer" => self.handle_sieve_request(msg),
-            _                        => InterceptAction::Forward(msg),
+            _ => InterceptAction::Forward(msg),
         }
     }
 
@@ -97,12 +97,13 @@ impl LspIntercept {
     }
 
     fn handle_sieve_request(&mut self, msg: JsonRpcMessage) -> InterceptAction {
-        let req: SieveRequest = match msg.params
+        let req: SieveRequest = match msg
+            .params
             .as_ref()
             .and_then(|p| serde_json::from_value(p.clone()).ok())
         {
             Some(r) => r,
-            None    => {
+            None => {
                 warn!("Invalid $/sieve/condensedBuffer params");
                 return InterceptAction::Drop;
             }
@@ -110,7 +111,7 @@ impl LspIntercept {
 
         let source = match self.buffers.get(&req.uri) {
             Some(b) => b.clone(),
-            None    => {
+            None => {
                 warn!(uri = %req.uri, "buffer not in cache for sieve request");
                 return InterceptAction::Drop;
             }
@@ -131,8 +132,8 @@ impl LspIntercept {
                     uri: req.uri,
                     condensed_text: String::from_utf8_lossy(&result.pruned).into_owned(),
                     original_bytes: result.original_len,
-                    pruned_bytes:   result.pruned_len,
-                    reduction_pct:  result.reduction_pct(),
+                    pruned_bytes: result.pruned_len,
+                    reduction_pct: result.reduction_pct(),
                 };
                 InterceptAction::Respond(serde_json::to_value(resp).unwrap_or(Value::Null))
             }

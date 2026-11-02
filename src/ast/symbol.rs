@@ -60,7 +60,12 @@ pub struct Symbol {
 
 impl Symbol {
     pub fn new(name: Span, body: Span, kind: SymbolKind, depth: u8) -> Self {
-        Self { name, body, kind, depth }
+        Self {
+            name,
+            body,
+            kind,
+            depth,
+        }
     }
 
     /// True if this symbol is a definition (not a call site / import).

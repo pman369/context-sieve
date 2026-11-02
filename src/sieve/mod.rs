@@ -80,7 +80,9 @@ pub struct SievePass {
 
 impl SievePass {
     pub fn new() -> Self {
-        Self { parser: AstParser::new() }
+        Self {
+            parser: AstParser::new(),
+        }
     }
 
     /// Execute the full sieve pipeline over `source`.
@@ -137,5 +139,7 @@ impl SievePass {
 }
 
 impl Default for SievePass {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }

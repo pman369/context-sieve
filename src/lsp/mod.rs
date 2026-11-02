@@ -13,7 +13,7 @@
 //! | `textDocument/didSave`   | Flush buffer cache entry. |
 //! | `$/sieve/condensedBuffer`| (extension) Return pruned buffer on demand. |
 
-pub mod types;
 pub mod intercept;
+pub mod types;
 
 pub use intercept::LspIntercept;

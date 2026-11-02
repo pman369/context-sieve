@@ -4,10 +4,11 @@
 //! to the correct language backend based on file extension.  The parser is
 //! **not** thread-safe (Tree-sitter's C API is not Send), so callers should
 //! hold one instance per thread or use a pool.
+//!
+//! On `wasm32-unknown-unknown` the tree-sitter C runtime is unavailable, so
+//! [`AstParser`] degrades gracefully: `parse()` always returns `None` and the
+//! sieve pass forwards the source buffer unchanged.
 
-use tree_sitter::Parser;
-
-use crate::ast::languages::{python::PythonParser, rust::RustParser, LanguageParser};
 use crate::ast::symbol::Symbol;
 
 /// Supported source languages.
@@ -32,16 +33,23 @@ impl Language {
     }
 }
 
+// ── Native (daemon) build ────────────────────────────────────────────────────
+
+#[cfg(not(target_arch = "wasm32"))]
+use crate::ast::languages::{python::PythonParser, rust::RustParser, LanguageParser};
+
 /// Facade that owns a `tree_sitter::Parser` and delegates symbol extraction
 /// to per-language backends.
+#[cfg(not(target_arch = "wasm32"))]
 pub struct AstParser {
-    inner: Parser,
+    inner: tree_sitter::Parser,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl AstParser {
     pub fn new() -> Self {
         Self {
-            inner: Parser::new(),
+            inner: tree_sitter::Parser::new(),
         }
     }
 
@@ -57,6 +65,35 @@ impl AstParser {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+impl Default for AstParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+// ── WASM stub ────────────────────────────────────────────────────────────────
+
+/// No-op stub for `wasm32-unknown-unknown`.
+///
+/// Tree-sitter's C runtime is unavailable in bare WASM; the sieve pass will
+/// return the original source unchanged when `parse()` returns `None`.
+#[cfg(target_arch = "wasm32")]
+pub struct AstParser;
+
+#[cfg(target_arch = "wasm32")]
+impl AstParser {
+    pub fn new() -> Self {
+        Self
+    }
+
+    /// Always returns `None` on WASM — callers fall back to the original source.
+    pub fn parse(&mut self, _language: Language, _source: &[u8]) -> Option<Vec<Symbol>> {
+        None
+    }
+}
+
+#[cfg(target_arch = "wasm32")]
 impl Default for AstParser {
     fn default() -> Self {
         Self::new()

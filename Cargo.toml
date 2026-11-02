@@ -20,17 +20,21 @@ required-features = ["daemon"]
 
 [features]
 default = ["daemon"]
-daemon  = ["dep:tokio", "dep:notify", "dep:interprocess"]
+daemon  = [
+    "dep:tokio", "dep:notify", "dep:interprocess",
+    "dep:tree-sitter", "dep:tree-sitter-rust", "dep:tree-sitter-python",
+    "dep:tree-sitter-typescript", "dep:tree-sitter-go",
+]
 wasm    = ["dep:wasm-bindgen", "dep:js-sys", "dep:console_error_panic_hook"]
 
 [dependencies]
 # --- Core ---
 anyhow             = "1.0"
-tree-sitter        = "0.22"
-tree-sitter-rust   = "0.21"
-tree-sitter-python = "0.21"
-tree-sitter-typescript = "0.21"
-tree-sitter-go     = "0.21"
+tree-sitter            = { version = "0.22", optional = true }
+tree-sitter-rust       = { version = "0.21", optional = true }
+tree-sitter-python     = { version = "0.21", optional = true }
+tree-sitter-typescript = { version = "0.21", optional = true }
+tree-sitter-go         = { version = "0.21", optional = true }
 
 # --- Graph / data structures ---
 petgraph           = { version = "0.6", default-features = false, features = ["graphmap"] }

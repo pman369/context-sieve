@@ -36,23 +36,16 @@ jobs:
       - run: cargo test --features daemon
 
   wasm:
-    name: WASM build (experimental)
+    name: WASM build
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
-      - name: Install wasi-libc and clang for C compilation to WASM
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang wasi-libc
       - run: cargo install wasm-pack
       - name: Build WASM bundle
-        env:
-          CFLAGS: "-isystem /usr/share/wasi-sysroot/include -isystem /usr/share/wasi-sysroot/include/wasm32-wasi -isystem /usr/include/wasm32-wasi"
         run: wasm-pack build --target web --features wasm --no-default-features
 
   bench:

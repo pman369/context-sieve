@@ -1,4 +1,8 @@
-//! Python language backend.
+//! Python language backend — native only; excluded from WASM builds.
+//!
+//! This file is compiled only when `target_arch != "wasm32"`.
+#![cfg(not(target_arch = "wasm32"))]
+//!
 //!
 //! Extracts function/class definitions, import statements, and call
 //! expressions from Python source via the tree-sitter-python grammar.

@@ -1,4 +1,8 @@
-//! Rust language backend.
+//! Rust language backend — native only; excluded from WASM builds.
+//!
+//! This file is compiled only when `target_arch != "wasm32"`.
+#![cfg(not(target_arch = "wasm32"))]
+//!
 //!
 //! Walks the Tree-sitter concrete syntax tree for Rust source and emits
 //! [`Symbol`]s for function definitions, struct/enum/trait declarations,

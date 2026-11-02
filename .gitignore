@@ -1,0 +1,26 @@
+# Rust build artifacts
+target/
+**/*.rs.bk
+Cargo.lock.bk
+
+# Agent & local working directories
+.agent/
+
+# WebAssembly build artifacts (wasm-pack)
+pkg/
+
+# Environment / local configs
+.env
+.env.*
+!.env.example
+
+# Editor & IDE configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db

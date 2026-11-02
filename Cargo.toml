@@ -1,0 +1,78 @@
+[package]
+name = "context-sieve"
+version = "0.1.0"
+edition = "2021"
+authors = ["context-sieve contributors"]
+description = "Local-first LSP proxy that prunes dead-code context from LLM prompts via Tree-sitter AST reachability analysis"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/your-org/context-sieve"
+keywords = ["llm", "lsp", "tree-sitter", "context-window", "wasm"]
+categories = ["development-tools", "wasm"]
+
+[lib]
+name = "context_sieve"
+crate-type = ["cdylib", "rlib"]   # cdylib for WASM, rlib for native linking
+
+[[bin]]
+name = "context-sieve-daemon"
+path = "src/main.rs"
+required-features = ["daemon"]
+
+[features]
+default = ["daemon"]
+daemon  = ["dep:tokio", "dep:notify", "dep:interprocess"]
+wasm    = ["dep:wasm-bindgen", "dep:js-sys", "dep:console_error_panic_hook"]
+
+[dependencies]
+# --- Core ---
+anyhow             = "1.0"
+tree-sitter        = "0.22"
+tree-sitter-rust   = "0.21"
+tree-sitter-python = "0.21"
+tree-sitter-typescript = "0.21"
+tree-sitter-go     = "0.21"
+
+# --- Graph / data structures ---
+petgraph           = { version = "0.6", default-features = false, features = ["graphmap"] }
+rustc-hash         = "1.1"    # FxHashMap — faster than std HashMap for short keys
+indexmap           = "2"
+
+# --- Serialisation (LSP JSON-RPC) ---
+serde              = { version = "1", features = ["derive"] }
+serde_json         = "1"
+
+# --- Daemon (gated) ---
+tokio              = { version = "1", features = ["full"], optional = true }
+notify             = { version = "6", optional = true }
+interprocess       = { version = "1", optional = true }   # Unix-domain / named-pipe IPC
+
+# --- Logging ---
+tracing            = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# --- CLI ---
+clap               = { version = "4", features = ["derive"] }
+
+# --- WASM (gated) ---
+wasm-bindgen              = { version = "0.2", optional = true }
+js-sys                    = { version = "0.3", optional = true }
+console_error_panic_hook  = { version = "0.1", optional = true }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+pretty_assertions = "1"
+tempfile = "3"
+
+[[bench]]
+name = "sieve_throughput"
+harness = false
+
+[profile.release]
+opt-level     = 3
+lto           = "thin"
+codegen-units = 1
+strip         = "symbols"
+
+[profile.wasm-release]
+inherits      = "release"
+opt-level     = "z"   # minimise binary size for WASM

@@ -9,6 +9,9 @@ repository = "https://github.com/your-org/context-sieve"
 keywords = ["llm", "lsp", "tree-sitter", "context-window", "wasm"]
 categories = ["development-tools", "wasm"]
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
 [lib]
 name = "context_sieve"
 crate-type = ["cdylib", "rlib"]   # cdylib for WASM, rlib for native linking

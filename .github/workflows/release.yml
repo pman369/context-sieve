@@ -113,7 +113,12 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           ARCHIVE="context-sieve-${TAG}-${{ matrix.target }}.tar.gz"
           BIN="target/${{ matrix.target }}/release/${BINARY_NAME}"
-          tar -czf "${ARCHIVE}" -C "$(dirname "$BIN")" "$(basename "$BIN")" README.md
+          # Copy binary to workspace root so tar can include both it and README.md
+          # from the same directory (the binary lives in target/…/release/, README.md
+          # is at the workspace root).
+          cp "${BIN}" "./${BINARY_NAME}"
+          tar -czf "${ARCHIVE}" "${BINARY_NAME}" README.md
+          rm -f "./${BINARY_NAME}"
           sha256sum "${ARCHIVE}" > "${ARCHIVE}.sha256"
           echo "ARCHIVE=${ARCHIVE}" >> "$GITHUB_ENV"
 

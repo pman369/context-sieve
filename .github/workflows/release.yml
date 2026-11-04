@@ -111,7 +111,8 @@ jobs:
         shell: bash
         run: |
           TAG="${GITHUB_REF_NAME}"
-          ARCHIVE="context-sieve-${TAG}-${{ matrix.target }}.tar.gz"
+          TARGET_LABEL=$(echo "${{ matrix.target }}" | sed 's/unknown/universal/g')
+          ARCHIVE="context-sieve-${TAG}-${TARGET_LABEL}.tar.gz"
           BIN="target/${{ matrix.target }}/release/${BINARY_NAME}"
           # Copy binary to workspace root so tar can include both it and README.md
           # from the same directory (the binary lives in target/…/release/, README.md
@@ -126,11 +127,12 @@ jobs:
         if: matrix.archive_ext == 'zip'
         shell: pwsh
         run: |
-          $Tag   = $env:GITHUB_REF_NAME
-          $Bin   = "target\${{ matrix.target }}\release\$env:BINARY_NAME.exe"
-          $Zip   = "context-sieve-${Tag}-${{ matrix.target }}.zip"
+          $Tag         = $env:GITHUB_REF_NAME
+          $TargetLabel = "${{ matrix.target }}".Replace("unknown", "universal")
+          $Bin         = "target\${{ matrix.target }}\release\$env:BINARY_NAME.exe"
+          $Zip         = "context-sieve-${Tag}-${TargetLabel}.zip"
           Compress-Archive -Path $Bin, README.md -DestinationPath $Zip
-          $Hash  = (Get-FileHash $Zip -Algorithm SHA256).Hash.ToLower()
+          $Hash        = (Get-FileHash $Zip -Algorithm SHA256).Hash.ToLower()
           "$Hash  $Zip" | Out-File "${Zip}.sha256" -Encoding utf8
           "ARCHIVE=$Zip" | Out-File $env:GITHUB_ENV -Append
 

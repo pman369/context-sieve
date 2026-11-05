@@ -2,7 +2,9 @@
 
 > **Local-first LSP proxy that prunes dead-code context from LLM prompts via Tree-sitter AST reachability analysis.**
 
-[![CI](https://github.com/your-org/context-sieve/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/context-sieve/actions)
+👉 **New to context-sieve? Check out the beginner-friendly [Non-Technical User Tutorial](TUTORIAL.md)**
+
+[![CI](https://github.com/pman369/context-sieve/actions/workflows/ci.yml/badge.svg)](https://github.com/pman369/context-sieve/actions)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20%7C%20Apache--2.0-blue.svg)](LICENSE)
 
 ---
